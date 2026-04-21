@@ -12,18 +12,19 @@ class CountryController extends Controller
     public function index(): View
     {
         $countries = Country::query()
-            ->where('active',true)
+            ->withTrashed()
+            ->where('active', true)
             ->orderBy('name')
             ->get();
 
-        return view ('countries.index', (
-            ['countries'=>$countries]
+        return view('countries.index', (
+        ['countries' => $countries]
         ));
     }
 
     public function create(): View
     {
-        return view('countries.create',);
+        return view('countries.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -44,18 +45,18 @@ class CountryController extends Controller
 
     public function show(Country $country): View
     {
-        $country->load(['name' => function($query) {
+        $country->load(['products' => function ($query) {
             $query->where('active', true)->limit(20);
         }]);
 
-        return view('countires.show',
-        ['country'=>$country]
+        return view('countries.show',
+            ['country' => $country]
         );
     }
 
     public function edit(Country $country): View
     {
-        return view('countries.edit', ['country'=>$country] );
+        return view('countries.edit', ['country' => $country]);
     }
 
     public function update(Request $request, Country $country): RedirectResponse
@@ -90,4 +91,48 @@ class CountryController extends Controller
             ->route('countries.index')
             ->with('success', "Страна '{$countryName}' успешно удалена!");
     }
+
+    public function restore($id): RedirectResponse
+    {
+        $country = Country::withTrashed()
+            ->findOrFail($id);
+        $countryName = $country->name;
+
+        if ($country->trashed()) {
+            $country->restore();
+            return redirect()
+                ->route('countries.index')
+                ->with('success', "Страна '{$countryName}' успешно восстановлена!");
+        }
+
+        return redirect()
+            ->route('countries.index')
+            ->with('success', "Страна '{$countryName}' не удалялась!");
+    }
+
+    public function forceDestroy($id): RedirectResponse
+    {
+        $country = Country::withTrashed()
+            ->findOrFail($id);
+        $countryName = $country->name;
+
+        if ($country->trashed()) {
+            $country->forceDelete();
+            return redirect()
+                ->route('countries.index')
+                ->with('success', "Страна '{$countryName}' успешно удалена из корзины!");
+        }
+
+        return redirect()
+            ->route('countries.index')
+            ->with('success', "Страна '{$countryName}' не находится в корзине!");
+    }
+
+    public function trashed(): View
+    {
+        $countries = Country::onlyTrashed()->orderBy('name')->get();
+        return view('countries.trashed', ['countries' => $countries]);
+    }
+
+
 }

@@ -13,12 +13,13 @@ class BrandController extends Controller
     public function index(): View
     {
         $brands = Brand::query()
+            ->withTrashed()
             ->where('active', true)
             ->orderBy('name')
             ->get();
 
         return view('brands.index', [
-            'brands'=>$brands
+            'brands' => $brands
         ]);
     }
 
@@ -45,7 +46,7 @@ class BrandController extends Controller
 
     public function show(Brand $brand): View
     {
-        $brand->load(['products' => function($query) {
+        $brand->load(['products' => function ($query) {
             $query->where('active', true)->limit(20);
         }]);
 
@@ -54,7 +55,7 @@ class BrandController extends Controller
 
     public function edit(Brand $brand): View
     {
-        return view('brands.edit', ['brand'=>$brand] );
+        return view('brands.edit', ['brand' => $brand]);
     }
 
     public function update(Request $request, Brand $brand): RedirectResponse
@@ -88,5 +89,47 @@ class BrandController extends Controller
         return redirect()
             ->route('brands.index')
             ->with('success', "Бренд '{$brandName}' успешно удален!");
+    }
+
+    public function restore($id): RedirectResponse
+    {
+        $brand = Brand::withTrashed()
+            ->findOrFail($id);
+        $brandName = $brand->name;
+
+        if ($brand->trashed()) {
+            $brand->restore();
+            return redirect()
+                ->route('brands.index')
+                ->with('success', "Бренд '{$brandName}' успешно восстановлен!");
+        }
+
+        return redirect()
+            ->route('brands.index')
+            ->with('success', "Бренд '{$brandName}' не удалялся!");
+    }
+
+    public function forceDestroy($id): RedirectResponse
+    {
+        $brand = Brand::withTrashed()
+            ->findOrFail($id);
+        $brandName = $brand->name;
+
+        if ($brand->trashed()) {
+            $brand->forceDelete();
+            return redirect()
+                ->route('brands.index')
+                ->with('success', "Бренд '{$brandName}' успешно удален из корзины!");
+        }
+
+        return redirect()
+            ->route('brands.index')
+            ->with('success', "Бренд '{$brandName}' не находится в корзине!");
+    }
+
+    public function trashed(): View
+    {
+        $brands = Brand::onlyTrashed()->orderBy('name')->get();
+        return view('brands.trashed', ['brands' => $brands]);
     }
 }

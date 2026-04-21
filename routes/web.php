@@ -19,6 +19,9 @@ Route::prefix('categories')->name('categories.')->group(function () {
     Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
     Route::put('{category}', [CategoryController::class, 'update'])->name('update');
     Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
+    Route::put('{category}/restore', [CategoryController::class, 'restore'])->name('restore');
+    Route::delete('{category}/forceDestroy', [CategoryController::class, 'forceDestroy'])->name('forceDestroy');
+    Route::get('trashed', [CategoryController::class, 'trashed'])->name('trashed');
 });
 
 //BRAND CONTROLLER
@@ -30,8 +33,12 @@ Route::prefix('brands')->name('brands.')->group(function () {
     Route::get('{brand}/edit', [BrandController::class, 'edit'])->name('edit');
     Route::put('{brand}', [BrandController::class, 'update'])->name('update');
     Route::delete('{brand}', [BrandController::class, 'destroy'])->name('destroy');
+    Route::put('{brand}/restore', [BrandController::class, 'restore'])->name('restore');
+    Route::delete('{brand}/forceDestroy', [BrandController::class, 'forceDestroy'])->name('forceDestroy');
+    Route::get('trashed', [BrandController::class, 'trashed'])->name('trashed');
 });
 
+//COUNTRY CONTROLLER
 Route::prefix('countries')->name('countries.')->group(function () {
     Route::get('', [CountryController::class, 'index'])->name('index');
     Route::get('create', [CountryController::class, 'create'])->name('create');
@@ -40,6 +47,9 @@ Route::prefix('countries')->name('countries.')->group(function () {
     Route::get('{country}/edit', [CountryController::class, 'edit'])->name('edit');
     Route::put('{country}', [CountryController::class, 'update'])->name('update');
     Route::delete('{country}', [CountryController::class, 'destroy'])->name('destroy');
+    Route::put('{country}/restore', [CountryController::class, 'restore'])->name('restore');
+    Route::delete('{country}/forceDestroy', [CountryController::class, 'forceDestroy'])->name('forceDestroy');
+    Route::get('trashed', [CountryController::class, 'trashed'])->name('trashed');
 });
 
 Auth::routes();

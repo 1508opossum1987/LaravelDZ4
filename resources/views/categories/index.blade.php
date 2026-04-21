@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-white">Категории товаров</h1>
+            <h1 class="text-3xl font-bold text-white">Категории</h1>
             <a href="{{ route('categories.create') }}"
                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
                 + Создать категорию
@@ -22,60 +22,121 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse($categories as $category)
-                <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition">
-                    <div class="p-6">
-                        <h2 class="text-xl font-bold text-white mb-2">
-                            {{ $category->name }}
-                        </h2>
+        <!-- Активные категории -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-white mb-4">Активные категории</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @forelse($categories->whereNull('deleted_at')->where('active', true) as $category)
+                    <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition">
+                        <div class="p-6">
+                            <h2 class="text-xl font-bold text-white mb-2">
+                                {{ $category->name }}
+                            </h2>
 
-                        @if($category->children->count() > 0)
-                            <div class="mb-3">
-                                <p class="text-gray-400 text-sm mb-1">Подкатегории:</p>
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach($category->children as $child)
-                                        <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">
-                                        {{ $child->name }}
-                                    </span>
-                                    @endforeach
+                            @if($category->parent)
+                                <div class="text-gray-400 text-sm mb-1">
+                                    Родитель: {{ $category->parent->name }}
                                 </div>
+                            @endif
+
+                            <div class="text-gray-400 text-sm mb-4">
+                                Товаров: {{ $category->products()->count() }}
+                                @if($category->children->count() > 0)
+                                    <br>Подкатегорий: {{ $category->children->count() }}
+                                @endif
                             </div>
-                        @endif
 
-                        <div class="flex justify-between items-center mt-4">
-                            <a href="{{ route('categories.show', $category) }}"
-                               class="text-blue-400 hover:text-blue-300 text-sm">
-                                Подробнее →
-                            </a>
-
-                            <div class="flex gap-2">
-                                <a href="{{ route('categories.edit', $category) }}"
-                                   class="text-yellow-400 hover:text-yellow-300 text-sm">
-                                    Редактировать
+                            <div class="flex justify-between items-center">
+                                <a href="{{ route('categories.show', $category) }}"
+                                   class="text-blue-400 hover:text-blue-300 text-sm">
+                                    Подробнее →
                                 </a>
 
-                                <form action="{{ route('categories.destroy', $category) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Удалить категорию «{{ $category->name }}»?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-400 hover:text-red-300 text-sm">
-                                        Удалить
-                                    </button>
-                                </form>
+                                <div class="flex gap-2">
+                                    <a href="{{ route('categories.edit', $category) }}"
+                                       class="text-yellow-400 hover:text-yellow-300 text-sm">
+                                        Редактировать
+                                    </a>
+
+                                    <form action="{{ route('categories.destroy', $category) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Удалить категорию «{{ $category->name }}»? Все подкатегории также будут удалены.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col-span-full text-center py-12">
-                    <p class="text-gray-400 text-lg">Нет категорий</p>
-                    <a href="{{ route('categories.create') }}" class="text-blue-400 hover:text-blue-300 mt-2 inline-block">
-                        Создать первую категорию
-                    </a>
-                </div>
-            @endforelse
+                @empty
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-400 text-lg">Нет активных категорий</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
+
+        <!-- Удаленные категории (корзина) -->
+        @php
+            $trashedCategories = $categories->whereNotNull('deleted_at');
+        @endphp
+
+        @if($trashedCategories->count() > 0)
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-4">Корзина (удаленные категории)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($trashedCategories as $category)
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg opacity-75">
+                            <div class="p-6">
+                                <h2 class="text-xl font-bold text-gray-400 mb-2">
+                                    {{ $category->name }}
+                                </h2>
+
+                                @if($category->parent)
+                                    <div class="text-gray-500 text-sm mb-1">
+                                        Родитель: {{ $category->parent->name }}
+                                    </div>
+                                @endif
+
+                                <div class="text-gray-500 text-sm mb-4">
+                                    Товаров: {{ $category->products()->count() }}
+                                    @if($category->children->count() > 0)
+                                        <br>Подкатегорий: {{ $category->children->count() }}
+                                    @endif
+                                    @if($category->deleted_at)
+                                        <br>Удалена: {{ $category->deleted_at->format('d.m.Y H:i') }}
+                                    @endif
+                                </div>
+
+                                <div class="flex justify-end gap-2">
+                                    <form action="{{ route('categories.restore', $category->id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Восстановить категорию «{{ $category->name }}»?')">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                                            Восстановить
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('categories.forceDestroy', $category->id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('ВНИМАНИЕ! Категория «{{ $category->name }}» будет удалена навсегда. Это действие нельзя отменить. Продолжить?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                                            Удалить навсегда
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 @endsection

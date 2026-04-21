@@ -14,9 +14,9 @@ class CategoryController extends Controller
     public function index(): View
     {
         $categories = Category::query()
+            ->withTrashed()
             ->with('children')
             ->whereNull('parent_id')
-            ->where('active', true)
             ->with('children')
             ->get();
 
@@ -96,22 +96,85 @@ class CategoryController extends Controller
     {
         $categoryName = $category->name;
 
+        // Проверка на товары
         if ($category->products()->exists()) {
             return redirect()
                 ->route('categories.index')
                 ->with('error', "Нельзя удалить категорию '{$categoryName}', так как у нее есть товары!");
         }
 
-        if ($category->children()->exists()) {
-            return redirect()
-                ->route('categories.index')
-                ->with('error', "Нельзя удалить категорию '{$categoryName}', так как у нее есть подкатегории!");
-        }
+        // Получаем все ID подкатегорий рекурсивно
+        $ids = $this->getAllChildIds($category->id);
 
-        $category->delete();
+        // Добавляем ID текущей категории
+        $ids[] = $category->id;
+
+        // Мягко удаляем все категории разом
+        Category::whereIn('id', $ids)->delete();
 
         return redirect()
             ->route('categories.index')
-            ->with('success', "Категория '{$categoryName}' успешно удалена!");
+            ->with('success', "Категория '{$categoryName}' и все её подкатегории успешно удалены!");
+    }
+
+    /**
+     * Получает ID всех подкатегорий рекурсивно
+     */
+    private function getAllChildIds(int $parentId): array
+    {
+        $ids = [];
+
+        // Получаем прямых потомков
+        $children = Category::where('parent_id', $parentId)->get();
+
+        foreach ($children as $child) {
+            $ids[] = $child->id;
+            // Рекурсивно получаем ID потомков потомков
+            $ids = array_merge($ids, $this->getAllChildIds($child->id));
+        }
+
+        return $ids;
+    }
+
+    public function restore($id): RedirectResponse
+    {
+        $category = Category::withTrashed()
+            ->findOrFail($id);
+        $categoryName = $category->name;
+
+        if ($category->trashed()) {
+            $category->restore();
+            return redirect()
+                ->route('categories.index')
+                ->with('success', "Категория'{$categoryName}' успешно восстановлена!");
+        }
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', "Категория '{$categoryName}' не удалялась!");
+    }
+
+    public function forceDestroy($id): RedirectResponse
+    {
+        $category = Category::withTrashed()
+            ->findOrFail($id);
+        $categoryName = $category->name;
+
+        if ($category->trashed()) {
+            $category->forceDelete();
+            return redirect()
+                ->route('categories.index')
+                ->with('success', "Категория '{$categoryName}' успешно удалена из корзины!");
+        }
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', "Категория '{$categoryName}' не находится в корзине!");
+    }
+
+    public function trashed(): View
+    {
+        $categories = Category::onlyTrashed()->orderBy('name')->get();
+        return view('categories.trashed', ['categories' => $categories]);
     }
 }

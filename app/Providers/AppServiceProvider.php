@@ -22,19 +22,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $categories = [];
-        if (Schema::hasTable('categories')) {
-            $categories = Category::query()
-                ->with(['children' => function ($query) {
-                    $query->where('active', true);
-                }])
-                ->whereNull('parent_id')
-                ->where('active', true)
-                ->get();
-        }
+        if (!$this->app->runningInConsole()) {
+            $categories = [];
+            if (Schema::hasTable('categories')) {
+                $categories = Category::query()
+                    ->with(['children' => function ($query) {
+                        $query->where('active', true);
+                    }])
+                    ->whereNull('parent_id')
+                    ->where('active', true)
+                    ->get();
+            }
 
-        View::composer('*', function ($view) use ($categories) {
-            $view->with('categories', $categories);
-        });
+            View::composer('*', function ($view) use ($categories) {
+                $view->with('categories', $categories);
+            });
+        }
     }
 }
