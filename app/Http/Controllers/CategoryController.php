@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Category\CategoryStoreRequest;
 use App\Models\Category;
+use App\Rules\RussianCharsRule;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -74,8 +75,8 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'parent_id' => 'nullable|exists:categories,id',
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id, new RussianCharsRule(70, 'Название категории'),
+            'parent_id' => 'nullable', 'exists:categories,id', new CountCategoryRule(),
             'active' => 'sometimes|boolean',
         ]);
 
