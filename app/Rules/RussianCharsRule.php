@@ -24,7 +24,6 @@ class RussianCharsRule implements ValidationRule
             return;
         }
 
-        // Убираем пробелы и знаки препинания для подсчета
         $cleanValue = preg_replace('/[^\p{L}]/u', '', $value);
 
         if (mb_strlen($cleanValue) === 0) {
@@ -32,7 +31,6 @@ class RussianCharsRule implements ValidationRule
             return;
         }
 
-        // Подсчитываем русские буквы (включая Ёё)
         $russianChars = preg_match_all('/[а-яА-ЯёЁ]/u', $cleanValue, $matches);
         $totalChars = mb_strlen($cleanValue);
 

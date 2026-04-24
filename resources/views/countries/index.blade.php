@@ -122,5 +122,9 @@
                 </div>
             </div>
         @endif
+        Пагинация
+        <div class="mt-10">
+            {{ $countries->links() }}
+        </div>
     </div>
 @endsection

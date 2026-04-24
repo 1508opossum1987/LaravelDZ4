@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Country\CountryStoreRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use App\Models\Country;
 
 class CountryController extends Controller
 {
+    private const int ITEMS_PER_PAGE = 6;
     public function index(): View
     {
         $countries = Country::query()
             ->withTrashed()
             ->where('active', true)
             ->orderBy('name')
-            ->get();
+            ->paginate(self::ITEMS_PER_PAGE);
 
         return view('countries.index', (
         ['countries' => $countries]
@@ -27,16 +30,14 @@ class CountryController extends Controller
         return view('countries.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(CountryStoreRequest $countryStoreRequest): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:countries,name',
-            'active' => 'sometimes|boolean',
-        ]);
+        $validated = $countryStoreRequest->validated();
+        $validated['slug'] = Str::slug($validated['name']);
 
-        $validated['active'] = $request->has('active') ? true : false;
+        $validated['active'] = $countryStoreRequest->has('active');
 
-        $country = Country::create($validated);
+        $country = Country::query()->create($validated);
 
         return redirect()
             ->route('countries.index')
@@ -62,7 +63,7 @@ class CountryController extends Controller
     public function update(Request $request, Country $country): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:countries,name,' . $country->id,
+            'name' => 'required|string|max:255|unique:countries,name,' . $country->id, new CountryStoreRequest(70, "Название страны"),
             'active' => 'sometimes|boolean',
         ]);
 

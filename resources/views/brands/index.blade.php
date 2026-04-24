@@ -122,5 +122,8 @@
                 </div>
             </div>
         @endif
+        <div class="mt-10">
+            {{ $brands->links() }}
+        </div>
     </div>
 @endsection

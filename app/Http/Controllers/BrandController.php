@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Brand\BrandStoreRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class BrandController extends Controller
 {
+    private const int ITEMS_PER_PAGE=8;
     public function index(): View
     {
         $brands = Brand::query()
             ->withTrashed()
             ->where('active', true)
             ->orderBy('name')
-            ->get();
+            ->paginate(self::ITEMS_PER_PAGE);;
 
         return view('brands.index', [
             'brands' => $brands
@@ -28,16 +31,14 @@ class BrandController extends Controller
         return view('brands.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(BrandStoreRequest $brandStoreRequest): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name',
-            'active' => 'sometimes|boolean',
-        ]);
+        $validated = $brandStoreRequest->validated();
+        $validated['slug'] = Str::slug($validated['name']);
 
-        $validated['active'] = $request->has('active') ? true : false;
+        $validated['active'] = $brandStoreRequest->has('active');
 
-        $brand = Brand::create($validated);
+        $brand = Brand::query()->create($validated);
 
         return redirect()
             ->route('brands.index')
@@ -61,7 +62,7 @@ class BrandController extends Controller
     public function update(Request $request, Brand $brand): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
+            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id, new BrandStoreRequest(70, "Название бренда"),
             'active' => 'sometimes|boolean',
         ]);
 

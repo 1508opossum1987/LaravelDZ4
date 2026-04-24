@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Category\CategoryStoreRequest;
 use App\Models\Category;
+use App\Rules\CountCategoryRule;
 use App\Rules\RussianCharsRule;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -12,14 +13,17 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    private const int ITEMS_PER_PAGE=7;
     public function index(): View
     {
         $categories = Category::query()
             ->withTrashed()
-            ->with('children')
+            ->with(['children' => function($query) {
+                $query->withTrashed()->orderBy('name');
+            }])
             ->whereNull('parent_id')
-            ->with('children')
-            ->get();
+            ->orderBy('name')
+            ->paginate(self::ITEMS_PER_PAGE);
 
         return view('categories.index', [
             'categories' => $categories

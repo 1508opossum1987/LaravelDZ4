@@ -137,7 +137,7 @@
                     <!-- Mega Dropdown -->
                     <div class="absolute left-0 top-full hidden group-hover:block w-screen max-w-7xl bg-white shadow-2xl rounded-2xl mt-2 z-50">
                         <div class="grid grid-cols-4 gap-6 p-8">
-                            @foreach($categories as $category)
+                            @foreach($navigationCategories as $category)
                                 <div>
                                     <a href="#" class="block font-bold text-gray-900 hover:text-orange-500 mb-4 text-base">
                                         🎯 {{ $category->name }}

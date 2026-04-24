@@ -22,11 +22,15 @@
             </div>
         @endif
 
-        <!-- Активные категории -->
+        @php
+            $activeCategories = $categories->whereNull('deleted_at')->where('active', true);
+            $trashedCategories = $categories->whereNotNull('deleted_at');
+        @endphp
+
         <div class="mb-12">
             <h2 class="text-2xl font-bold text-white mb-4">Активные категории</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                @forelse($categories->whereNull('deleted_at')->where('active', true) as $category)
+                @forelse($activeCategories as $category)
                     <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition">
                         <div class="p-6">
                             <h2 class="text-xl font-bold text-white mb-2">
@@ -78,11 +82,6 @@
                 @endforelse
             </div>
         </div>
-
-        <!-- Удаленные категории (корзина) -->
-        @php
-            $trashedCategories = $categories->whereNotNull('deleted_at');
-        @endphp
 
         @if($trashedCategories->count() > 0)
             <div>
@@ -138,5 +137,8 @@
                 </div>
             </div>
         @endif
+        <div class="mt-10">
+            {{ $categories->links() }}
+        </div>
     </div>
 @endsection
