@@ -34,7 +34,7 @@ class ProductController extends Controller
 
     public function store(ProductStoreRequest $productStoreRequest): RedirectResponse
     {
-        $validated = $producrStoreRequest->validated();
+        $validated = $productStoreRequest->validated();
         $validated['slug'] = Str::slug($validated['name']);
 
         $validated['active'] = $productStoreRequest->has('active');
@@ -65,74 +65,68 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|min:3|max:255|unique:products,name,' . $product->id, new ProductStoreRequest(70, "Название продукта"),
             'active' => 'sometimes|boolean',
-            'price' => 'sometimes|decimal'
+            'price' => 'required|decimal|min:100|max:1000000,'
         ]);
 
         $validated['active'] = $request->has('active') ? true : false;
 
-        $brand->update($validated);
+        $product->update($validated);
 
         return redirect()
-            ->route('brands.index')
-            ->with('success', "Бренд '{$brand->name}' успешно обновлен!");
+            ->route('products.index')
+            ->with('success', "Продукт '{$product->name}' успешно обновлен!");
     }
 
-    public function destroy(Brand $brand): RedirectResponse
+    public function destroy(Product $product): RedirectResponse
     {
-        $brandName = $brand->name;
+        $productName = $product->name;
 
-        if ($brand->products()->exists()) {
-            return redirect()
-                ->route('brands.index')
-                ->with('error', "Нельзя удалить бренд '{$brandName}', так как у него есть товары!");
-        }
-
-        $brand->delete();
+        $product->delete();
 
         return redirect()
-            ->route('brands.index')
-            ->with('success', "Бренд '{$brandName}' успешно удален!");
+            ->route('products.index')
+            ->with('success', "Продукт '{$productName}' успешно удален!");
     }
 
     public function restore($id): RedirectResponse
     {
-        $brand = Brand::withTrashed()
+        $product = Product::withTrashed()
             ->findOrFail($id);
-        $brandName = $brand->name;
+        $productName = $product->name;
 
-        if ($brand->trashed()) {
-            $brand->restore();
+        if ($product->trashed()) {
+            $product->restore();
             return redirect()
-                ->route('brands.index')
-                ->with('success', "Бренд '{$brandName}' успешно восстановлен!");
+                ->route('products.index')
+                ->with('success', "Продукт '{$productName}' успешно восстановлен!");
         }
 
         return redirect()
-            ->route('brands.index')
-            ->with('success', "Бренд '{$brandName}' не удалялся!");
+            ->route('products.index')
+            ->with('success', "Продукт '{$productName}' не удалялся!");
     }
 
     public function forceDestroy($id): RedirectResponse
     {
-        $brand = Brand::withTrashed()
+        $product = Product::withTrashed()
             ->findOrFail($id);
-        $brandName = $brand->name;
+        $productName = $product->name;
 
-        if ($brand->trashed()) {
-            $brand->forceDelete();
+        if ($product->trashed()) {
+            $product->forceDelete();
             return redirect()
-                ->route('brands.index')
-                ->with('success', "Бренд '{$brandName}' успешно удален из корзины!");
+                ->route('products.index')
+                ->with('success', "Продукт '{$productName}' успешно удален из корзины!");
         }
 
         return redirect()
-            ->route('brands.index')
-            ->with('success', "Бренд '{$brandName}' не находится в корзине!");
+            ->route('products.index')
+            ->with('success', "Продукт '{$productName}' не находится в корзине!");
     }
 
     public function trashed(): View
     {
-        $brands = Brand::onlyTrashed()->orderBy('name')->get();
-        return view('brands.trashed', ['brands' => $brands]);
+        $products = Product::onlyTrashed()->orderBy('name')->get();
+        return view('products.trashed', ['products' => $products]);
     }
 }
