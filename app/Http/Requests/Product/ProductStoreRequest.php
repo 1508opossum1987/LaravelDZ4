@@ -14,7 +14,7 @@ class ProductStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,9 +25,14 @@ class ProductStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3|max:255|unique:products,name,' , new ProductStoreRequest(70, "Название продукта"),
+            'name' => ['required', 'string', 'min:3', 'max:255', 'unique:products,name'],
             'active' => 'sometimes|boolean',
-            'price' => 'required|decimal|min:0|max:1000000,'
+            'price' => 'required|numeric|min:0|max:1000000',
+            'description' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'required|exists:brands,id',
+            'country_id' => 'required|exists:countries,id',
+            'img_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 
@@ -36,7 +41,13 @@ class ProductStoreRequest extends FormRequest
         return [
             'name.required' => 'Поле Name обязательно к заполнению!',
             'name.min' => 'Минимальное количество символов 3!',
-            'price.required' => 'Поле Price обязательно к заполнению'
+            'price.required' => 'Поле Price обязательно к заполнению',
+            'price.numeric' => 'Поле Price должно быть числом',
+            'price.min' => 'Цена не может быть меньше 0',
+            'price.max' => 'Цена не может быть больше 1000000',
+            'category_id.required' => 'Выберите категорию',
+            'brand_id.required' => 'Выберите бренд',
+            'country_id.required' => 'Выберите страну',
         ];
     }
 }

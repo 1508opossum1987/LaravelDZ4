@@ -60,14 +60,15 @@ class CountryController extends Controller
         return view('countries.edit', ['country' => $country]);
     }
 
-    public function update(Request $request, Country $country): RedirectResponse
+    public function update(CountryStoreRequest $request, Country $country): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:countries,name,' . $country->id, new CountryStoreRequest(70, "Название страны"),
-            'active' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
-        $validated['active'] = $request->has('active') ? true : false;
+        if ($validated['name'] !== $country->name) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        $validated['active'] = $request->has('active');
 
         $country->update($validated);
 

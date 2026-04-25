@@ -19,7 +19,7 @@ class BrandStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3|max:255|unique:brands,name', new RussianCharsRule(70, "Название бренда"),
+            'name' => ['required', 'string', 'min:3', 'max:255', 'unique:brands,name', new RussianCharsRule(70, "Название бренда")],
             'active' => 'sometimes|boolean',
         ];
     }

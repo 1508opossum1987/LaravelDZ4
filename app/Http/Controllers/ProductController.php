@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Brand\BrandStoreRequest;
+use App\Http\Requests\Product\ProductStoreRequest;
 use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Country;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +31,13 @@ class ProductController extends Controller
 
     public function create(): View
     {
-        return view('products.create');
+        $categories = Category::where('active', true)->orderBy('name')->get();
+        $brands = Brand::where('active', true)->orderBy('name')->get();
+        $countries = Country::where('active', true)->orderBy('name')->get();
+        return view('products.create', [
+            'categories' => $categories,
+            'brands' => $brands,
+            'countries' => $countries]);
     }
 
     public function store(ProductStoreRequest $productStoreRequest): RedirectResponse
@@ -48,25 +56,31 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        $product->load(['products' => function ($query) {
-            $query->where('active', true)->limit(20);
-        }]);
+        $product->load(['category', 'brand', 'country']);
 
-        return view('products.show', compact('product'));
+        return view('products.show', ['product'=>$product]);
     }
 
     public function edit(Product $product): View
     {
-        return view('products.edit', ['product' => $product]);
+        $categories = Category::where('active', true)->orderBy('name')->get();
+        $brands = Brand::where('active', true)->orderBy('name')->get();
+        $countries = Country::where('active', true)->orderBy('name')->get();
+
+        return view('products.edit', [
+            'product' => $product,
+            'categories' => $categories,
+            'brands' => $brands,
+            'countries' => $countries]);
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(ProductStoreRequest $request, Product $product): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|min:3|max:255|unique:products,name,' . $product->id, new ProductStoreRequest(70, "Название продукта"),
-            'active' => 'sometimes|boolean',
-            'price' => 'required|decimal|min:100|max:1000000,'
-        ]);
+        $validated = $request->validated();
+
+        if ($validated['name'] !== $product->name) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
 
         $validated['active'] = $request->has('active') ? true : false;
 

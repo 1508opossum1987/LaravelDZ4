@@ -76,13 +76,9 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(CategoryStoreRequest $request, Category $category): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id, new RussianCharsRule(70, 'Название категории'),
-            'parent_id' => 'nullable', 'exists:categories,id', new CountCategoryRule(),
-            'active' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
         if ($validated['name'] !== $category->name) {
             $validated['slug'] = Str::slug($validated['name']);

@@ -14,7 +14,7 @@ class CountCategoryRule implements ValidationRule
         $category = Category::query()->where('id', $value)->firstOrFail();
 
         if ($category->children()->count() > $this->maxCount) {
-            $fail("Максимальное количество дочерных под категорий может быть: {$this->maxCount}!");
+            $fail("Максимальное количество дочерних подкатегорий может быть: {$this->maxCount}!");
         }
     }
 }

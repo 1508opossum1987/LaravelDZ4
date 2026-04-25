@@ -59,12 +59,13 @@ class BrandController extends Controller
         return view('brands.edit', ['brand' => $brand]);
     }
 
-    public function update(Request $request, Brand $brand): RedirectResponse
+    public function update(BrandStoreRequest $request, Brand $brand): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id, new BrandStoreRequest(70, "Название бренда"),
-            'active' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
+
+        if ($validated['name'] !== $brand->name) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
 
         $validated['active'] = $request->has('active') ? true : false;
 

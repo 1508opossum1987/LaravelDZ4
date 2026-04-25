@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Country;
 
+use App\Rules\RussianCharsRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+
 
 class CountryStoreRequest extends FormRequest
 {
@@ -23,7 +25,7 @@ class CountryStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3|max:255|unique:countries,name', new CountryStoreRequest(70, request: "Название страны"),
+            'name' => ['required', 'string', 'min:3', 'max:255', 'unique:countries,name', new RussianCharsRule(70, "Название страны")],
             'active' => 'sometimes|boolean',
         ];
     }

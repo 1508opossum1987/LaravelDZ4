@@ -16,8 +16,8 @@ class CategoryStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3|max:255|unique:categories,name', new RussianCharsRule(70, 'Название категории'),
-            'parent_id' => 'nullable','exists:categories,id', new CountCategoryRule(),
+            'name' => ['required','string','min:3','max:255','unique:categories,name', new RussianCharsRule(70, 'Название категории')],
+            'parent_id' => ['nullable','exists:categories,id', new CountCategoryRule()],
             'active' => 'nullable|boolean',
         ];
     }
