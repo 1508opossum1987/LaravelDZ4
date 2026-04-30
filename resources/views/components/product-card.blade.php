@@ -26,7 +26,7 @@
 
     <!-- Изображение -->
     <a href="#" class="block overflow-hidden bg-gray-50">
-        <img src="{{ $product->img_path ?? 'https://via.placeholder.com/300x300?text=No+Image' }}"
+        <img src="{{ $product->img_path ? asset('storage/' . $product->img_path) : '/images/notavailable.jpg' }}"
              alt="{{ $product->name }}"
              class="w-full h-64 object-contain p-6 transition-transform duration-500 group-hover:scale-110">
     </a>

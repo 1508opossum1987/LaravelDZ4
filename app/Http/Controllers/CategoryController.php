@@ -13,12 +13,13 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    private const int ITEMS_PER_PAGE=7;
+    private const int ITEMS_PER_PAGE = 7;
+
     public function index(): View
     {
         $categories = Category::query()
             ->withTrashed()
-            ->with(['children' => function($query) {
+            ->with(['children' => function ($query) {
                 $query->withTrashed()->orderBy('name');
             }])
             ->whereNull('parent_id')
@@ -177,5 +178,12 @@ class CategoryController extends Controller
     {
         $categories = Category::onlyTrashed()->orderBy('name')->get();
         return view('categories.trashed', ['categories' => $categories]);
+    }
+
+    public function categoryProducts(Category $category): View
+    {
+        return view('categories.products',
+            ['category' => $category,
+                'products' => $category->products()->paginate(12)]);
     }
 }

@@ -25,14 +25,16 @@ class ProductStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3', 'max:255', 'unique:products,name'],
+            'name' => ['required', 'string', 'min:3', 'max:255'],
             'active' => 'sometimes|boolean',
             'price' => 'required|numeric|min:0|max:1000000',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:5000',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'country_id' => 'required|exists:countries,id',
             'img_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'discount_price' => 'nullable|numeric|min:0|max:1000000',
+            'price_from' => 'nullable|numeric|min:0|max:1000000',
         ];
     }
 

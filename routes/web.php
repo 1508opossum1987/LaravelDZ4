@@ -17,6 +17,7 @@ Route::prefix('categories')->name('categories.')->group(function () {
     Route::get('create', [CategoryController::class, 'create'])->name('create');
     Route::post('', [CategoryController::class, 'store'])->name('store');
     Route::get('{category}', [CategoryController::class, 'show'])->name('show');
+    Route::get('{category}/products', [CategoryController::class, 'categoryProducts'])->name('category.products');
     Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
     Route::put('{category}', [CategoryController::class, 'update'])->name('update');
     Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
@@ -70,7 +71,9 @@ Route::get('/email/verify', function () {
 //PRODUCT CONTROLLER
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('', [ProductController::class, 'index'])->name('index');
-    Route::get('create', [ProductController::class, 'create'])->name('create');
+    Route::get('create', [ProductController::class, 'create'])
+        ->name('create')
+        ->middleware(\App\Http\Middleware\AdminMiddleware::class);
     Route::post('', [ProductController::class, 'store'])->name('store');
     Route::get('{product}', [ProductController::class, 'show'])->name('show');
     Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');

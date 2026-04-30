@@ -137,7 +137,7 @@
                         <label for="img_path" class="block text-white mb-2">Изображение товара</label>
                         @if($product->img_path)
                             <div class="mb-2">
-                                <img src="{{ Storage::url($product->img_path) }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded">
+                                <img src="{{ asset('storage/' . $product->img_path) }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded">
                                 <p class="text-gray-400 text-sm mt-1">Текущее изображение</p>
                             </div>
                         @endif
