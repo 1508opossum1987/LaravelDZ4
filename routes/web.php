@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
@@ -73,14 +74,13 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('', [ProductController::class, 'index'])->name('index');
     Route::get('create', [ProductController::class, 'create'])
         ->name('create')
-        ->middleware(\App\Http\Middleware\AdminMiddleware::class);
+        ->middleware(AdminMiddleware::class);
     Route::post('', [ProductController::class, 'store'])->name('store');
     Route::get('{product}', [ProductController::class, 'show'])->name('show');
-    Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');
+    Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit')->middleware(AdminMiddleware::class);
     Route::put('{product}', [ProductController::class, 'update'])->name('update');
-    Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy');
+    Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy')->middleware(AdminMiddleware::class);
     Route::put('{product}/restore', [ProductController::class, 'restore'])->name('restore');
     Route::delete('{product}/forceDestroy', [ProductController::class, 'forceDestroy'])->name('forceDestroy');
     Route::get('trashed', [ProductController::class, 'trashed'])->name('trashed');
 });
-
