@@ -70,7 +70,12 @@ class CountryController extends Controller
 
         $validated['active'] = $request->has('active');
 
-        $country->update($validated);
+        try {
+            $country->name = $validated['name'];
+            $country->active=$validated['active'];
+        }
+        catch (\Exception $exception)
+        {}
 
         return redirect()
             ->route('countries.index')

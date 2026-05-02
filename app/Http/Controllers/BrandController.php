@@ -69,7 +69,12 @@ class BrandController extends Controller
 
         $validated['active'] = $request->has('active') ? true : false;
 
-        $brand->update($validated);
+        try {
+            $brand->name = $validated['name'];
+            $brand->active=$validated['active'];
+        }
+        catch (\Exception $exception)
+        {}
 
         return redirect()
             ->route('brands.index')

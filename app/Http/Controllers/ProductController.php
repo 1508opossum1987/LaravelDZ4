@@ -10,18 +10,20 @@ use App\Models\Country;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    private const int ITEMS_PER_PAGE=6;
+    private const int ITEMS_PER_PAGE = 12;
+
     public function index(): View
     {
         $products = Product::query()
             ->withTrashed()
             ->where('active', true)
-            ->orderBy('name')
+            ->orderByDesc('created_at')
             ->paginate(self::ITEMS_PER_PAGE);
 
         return view('products.index', (
@@ -47,7 +49,18 @@ class ProductController extends Controller
 
         $validated['active'] = $productStoreRequest->has('active');
 
-        $product = Product::query()->create($validated);
+        if ($productStoreRequest->hasFile('img_path')) {
+            $validated['img_path'] = $productStoreRequest->file('img_path')->store('products', 'public');
+        }
+        try {
+            $product = Product::query()->create($validated);
+        } catch (\Exception $exception) {
+            if (
+                $productStoreRequest->hasFile('img_path') &&
+                File::exists('storage/' . $validated['img_path'])) {
+                File::delete('storage/' . $validated['img_path']);
+            }
+        }
 
         return redirect()
             ->route('products.index')
@@ -58,7 +71,7 @@ class ProductController extends Controller
     {
         $product->load(['category', 'brand', 'country']);
 
-        return view('products.show', ['product'=>$product]);
+        return view('products.show', ['product' => $product]);
     }
 
     public function edit(Product $product): View
@@ -84,7 +97,34 @@ class ProductController extends Controller
 
         $validated['active'] = $request->has('active') ? true : false;
 
-        $product->update($validated);
+        $filePath = null;
+        if ($request->hasFile('img_path')) {
+            $filePath = $request->file('img_path')->store('products', 'public');
+        }
+
+        try {
+            $product->country_id = $validated['country_id'];
+            $product->brand_id = $validated['brand_id'];
+            $product->category_id = $validated['category_id'];
+            $product->price = $validated['price'];
+            $product->active = $validated['active'];
+            $product->name = $validated['name'];
+            $product->description = $validated['description'];
+            $product->discount_price = $validated['discount_price'];
+            $product->price_from = $validated['price_from'];
+            if ($filePath) {
+                if (File::exists('storage/' . $product->img_path)) {
+                    File::delete('storage/' . $product->img_path);
+                }
+                $product->img_path = $filePath;
+            }
+            $product->save();
+        } catch (\Exception $exception) {
+            if ($filePath && File::exists($filePath)) {
+                File::delete($filePath);
+            }
+        }
+
 
         return redirect()
             ->route('products.index')

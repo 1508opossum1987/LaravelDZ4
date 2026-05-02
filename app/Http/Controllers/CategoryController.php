@@ -87,7 +87,13 @@ class CategoryController extends Controller
 
         $validated['active'] = $request->has('active') ? true : false;
 
-        $category->update($validated);
+        try {
+            $category->name = $validated['name'];
+            $category->active=$validated['active'];
+            $category->parent_id=$validated['parent_id'];
+        }
+        catch (\Exception $exception)
+        {}
 
         return redirect()
             ->route('categories.index')
