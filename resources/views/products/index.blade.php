@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        @if($trashedProducts->count() > 0)
+        @if(auth()->user()->isAdmin()&&$trashedProducts->count() > 0)
             <div>
                 <h2 class="text-2xl font-bold text-white mb-4">Корзина (удаленные товары)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -144,7 +144,6 @@
                 </div>
             </div>
         @endif
-
         <div class="mt-10">
             {{ $products->links() }}
         </div>

@@ -125,7 +125,6 @@ class ProductController extends Controller
             }
         }
 
-
         return redirect()
             ->route('products.index')
             ->with('success', "Продукт '{$product->name}' успешно обновлен!");

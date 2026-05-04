@@ -15,44 +15,92 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // CATEGORY CONTROLLER
 Route::prefix('categories')->name('categories.')->group(function () {
     Route::get('', [CategoryController::class, 'index'])->name('index');
-    Route::get('create', [CategoryController::class, 'create'])->name('create');
-    Route::post('', [CategoryController::class, 'store'])->name('store');
+    Route::get('create', [CategoryController::class, 'create'])
+        ->name('create')
+        ->middleware(AdminMiddleware::class);
+    Route::post('', [CategoryController::class, 'store'])
+        ->name('store')
+        ->middleware(AdminMiddleware::class);
     Route::get('{category}', [CategoryController::class, 'show'])->name('show');
     Route::get('{category}/products', [CategoryController::class, 'categoryProducts'])->name('category.products');
-    Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
-    Route::put('{category}', [CategoryController::class, 'update'])->name('update');
-    Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
-    Route::put('{category}/restore', [CategoryController::class, 'restore'])->name('restore');
-    Route::delete('{category}/forceDestroy', [CategoryController::class, 'forceDestroy'])->name('forceDestroy');
-    Route::get('trashed', [CategoryController::class, 'trashed'])->name('trashed');
+    Route::get('{category}/edit', [CategoryController::class, 'edit'])
+        ->name('edit')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{category}', [CategoryController::class, 'update'])
+        ->name('update')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{category}', [CategoryController::class, 'destroy'])
+        ->name('destroy')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{category}/restore', [CategoryController::class, 'restore'])
+        ->name('restore')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{category}/forceDestroy', [CategoryController::class, 'forceDestroy'])
+        ->name('forceDestroy')
+        ->middleware(AdminMiddleware::class);
+    Route::get('trashed', [CategoryController::class, 'trashed'])
+        ->name('trashed')
+    ;
 });
 
 //BRAND CONTROLLER
 Route::prefix('brands')->name('brands.')->group(function () {
     Route::get('', [BrandController::class, 'index'])->name('index');
-    Route::get('create', [BrandController::class, 'create'])->name('create');
-    Route::post('', [BrandController::class, 'store'])->name('store');
+    Route::get('create', [BrandController::class, 'create'])
+        ->name('create')
+        ->middleware(AdminMiddleware::class);
+    Route::post('', [BrandController::class, 'store'])
+        ->name('store')
+        ->middleware(AdminMiddleware::class);
     Route::get('{brand}', [BrandController::class, 'show'])->name('show');
-    Route::get('{brand}/edit', [BrandController::class, 'edit'])->name('edit');
-    Route::put('{brand}', [BrandController::class, 'update'])->name('update');
-    Route::delete('{brand}', [BrandController::class, 'destroy'])->name('destroy');
-    Route::put('{brand}/restore', [BrandController::class, 'restore'])->name('restore');
-    Route::delete('{brand}/forceDestroy', [BrandController::class, 'forceDestroy'])->name('forceDestroy');
-    Route::get('trashed', [BrandController::class, 'trashed'])->name('trashed');
+    Route::get('{brand}/edit', [BrandController::class, 'edit'])
+        ->name('edit')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{brand}', [BrandController::class, 'update'])
+        ->name('update')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{brand}', [BrandController::class, 'destroy'])
+        ->name('destroy')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{brand}/restore', [BrandController::class, 'restore'])
+        ->name('restore')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{brand}/forceDestroy', [BrandController::class, 'forceDestroy'])
+        ->name('forceDestroy')
+        ->middleware(AdminMiddleware::class);
+    Route::get('trashed', [BrandController::class, 'trashed'])
+        ->name('trashed')
+        ->middleware(AdminMiddleware::class);
 });
 
 //COUNTRY CONTROLLER
 Route::prefix('countries')->name('countries.')->group(function () {
     Route::get('', [CountryController::class, 'index'])->name('index');
-    Route::get('create', [CountryController::class, 'create'])->name('create');
-    Route::post('', [CountryController::class, 'store'])->name('store');
+    Route::get('create', [CountryController::class, 'create'])
+        ->name('create')
+        ->middleware(AdminMiddleware::class);
+    Route::post('', [CountryController::class, 'store'])
+        ->name('store')
+        ->middleware(AdminMiddleware::class);
     Route::get('{country}', [CountryController::class, 'show'])->name('show');
-    Route::get('{country}/edit', [CountryController::class, 'edit'])->name('edit');
-    Route::put('{country}', [CountryController::class, 'update'])->name('update');
-    Route::delete('{country}', [CountryController::class, 'destroy'])->name('destroy');
-    Route::put('{country}/restore', [CountryController::class, 'restore'])->name('restore');
-    Route::delete('{country}/forceDestroy', [CountryController::class, 'forceDestroy'])->name('forceDestroy');
-    Route::get('trashed', [CountryController::class, 'trashed'])->name('trashed');
+    Route::get('{country}/edit', [CountryController::class, 'edit'])
+        ->name('edit')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{country}', [CountryController::class, 'update'])
+        ->name('update')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{country}', [CountryController::class, 'destroy'])
+        ->name('destroy')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{country}/restore', [CountryController::class, 'restore'])
+        ->name('restore')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{country}/forceDestroy', [CountryController::class, 'forceDestroy'])
+        ->name('forceDestroy')
+        ->middleware(AdminMiddleware::class);
+    Route::get('trashed', [CountryController::class, 'trashed'])
+        ->name('trashed')
+        ->middleware(AdminMiddleware::class);
 });
 
 Auth::routes();
@@ -75,12 +123,26 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('create', [ProductController::class, 'create'])
         ->name('create')
         ->middleware(AdminMiddleware::class);
-    Route::post('', [ProductController::class, 'store'])->name('store');
+    Route::post('', [ProductController::class, 'store'])
+        ->name('store')
+        ->middleware(AdminMiddleware::class);
     Route::get('{product}', [ProductController::class, 'show'])->name('show');
-    Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit')->middleware(AdminMiddleware::class);
-    Route::put('{product}', [ProductController::class, 'update'])->name('update');
-    Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy')->middleware(AdminMiddleware::class);
-    Route::put('{product}/restore', [ProductController::class, 'restore'])->name('restore');
-    Route::delete('{product}/forceDestroy', [ProductController::class, 'forceDestroy'])->name('forceDestroy');
-    Route::get('trashed', [ProductController::class, 'trashed'])->name('trashed');
+    Route::get('{product}/edit', [ProductController::class, 'edit'])
+        ->name('edit')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{product}', [ProductController::class, 'update'])
+        ->name('update')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{product}', [ProductController::class, 'destroy'])
+        ->name('destroy')
+        ->middleware(AdminMiddleware::class);
+    Route::put('{product}/restore', [ProductController::class, 'restore'])
+        ->name('restore')
+        ->middleware(AdminMiddleware::class);
+    Route::delete('{product}/forceDestroy', [ProductController::class, 'forceDestroy'])
+        ->name('forceDestroy')
+        ->middleware(AdminMiddleware::class);
+    Route::get('trashed', [ProductController::class, 'trashed'])
+        ->name('trashed')
+        ->middleware(AdminMiddleware::class);
 });

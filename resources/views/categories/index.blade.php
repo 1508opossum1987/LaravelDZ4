@@ -2,13 +2,15 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-white">Категории</h1>
-            <a href="{{ route('categories.create') }}"
-               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                + Создать категорию
-            </a>
-        </div>
+        @if (auth()->user()->isAdmin())
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-white">Категории</h1>
+                <a href="{{ route('categories.create') }}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                    + Создать категорию
+                </a>
+            </div>
+        @endif
 
         @if(session('success'))
             <div class="bg-green-600 text-white p-4 rounded-lg mb-6">
@@ -56,22 +58,24 @@
                                     Подробнее →
                                 </a>
 
-                                <div class="flex gap-2">
-                                    <a href="{{ route('categories.edit', $category) }}"
-                                       class="text-yellow-400 hover:text-yellow-300 text-sm">
-                                        Редактировать
-                                    </a>
+                                @if(auth()->user()->isAdmin())
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('categories.edit', $category) }}"
+                                           class="text-yellow-400 hover:text-yellow-300 text-sm">
+                                            Редактировать
+                                        </a>
 
-                                    <form action="{{ route('categories.destroy', $category) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Удалить категорию «{{ $category->name }}»? Все подкатегории также будут удалены.')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm">
-                                            Удалить
-                                        </button>
-                                    </form>
-                                </div>
+                                        <form action="{{ route('categories.destroy', $category) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Удалить категорию «{{ $category->name }}»? Все подкатегории также будут удалены.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-400 hover:text-red-300 text-sm">
+                                                Удалить
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -83,7 +87,7 @@
             </div>
         </div>
 
-        @if($trashedCategories->count() > 0)
+        @if(auth()->user()->isAdmin()&&$trashedCategories->count() > 0)
             <div>
                 <h2 class="text-2xl font-bold text-white mb-4">Корзина (удаленные категории)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -116,7 +120,8 @@
                                           onsubmit="return confirm('Восстановить категорию «{{ $category->name }}»?')">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                                        <button type="submit"
+                                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
                                             Восстановить
                                         </button>
                                     </form>
@@ -126,7 +131,8 @@
                                           onsubmit="return confirm('ВНИМАНИЕ! Категория «{{ $category->name }}» будет удалена навсегда. Это действие нельзя отменить. Продолжить?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                                        <button type="submit"
+                                                class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
                                             Удалить навсегда
                                         </button>
                                     </form>

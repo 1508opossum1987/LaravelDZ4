@@ -67,13 +67,14 @@
                             <p class="text-gray-300 leading-relaxed">{{ $product->description }}</p>
                         </div>
                     @endif
-
-                    <div class="flex gap-3 pt-4 border-t border-gray-700">
-                        <a href="{{ route('products.edit', $product) }}"
-                           class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition">
-                            Редактировать товар
-                        </a>
-                    </div>
+                    @if(auth()->user()->isAdmin())
+                        <div class="flex gap-3 pt-4 border-t border-gray-700">
+                            <a href="{{ route('products.edit', $product) }}"
+                               class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                                Редактировать товар
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

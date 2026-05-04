@@ -75,7 +75,9 @@ class CountryController extends Controller
             $country->active=$validated['active'];
         }
         catch (\Exception $exception)
-        {}
+        {
+            abort(500, $exception->getMessage());
+        }
 
         return redirect()
             ->route('countries.index')

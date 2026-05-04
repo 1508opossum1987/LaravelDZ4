@@ -34,12 +34,14 @@
                 </div>
             @endif
 
-            <div class="flex gap-3 mt-6">
-                <a href="{{ route('categories.edit', $category) }}"
-                   class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                    Редактировать
-                </a>
-            </div>
+            @if(auth()->user()->isAdmin())
+                <div class="flex gap-3 mt-6">
+                    <a href="{{ route('categories.edit', $category) }}"
+                       class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                        Редактировать
+                    </a>
+                </div>
+            @endif
         </div>
 
         @if($category->products->count() > 0)

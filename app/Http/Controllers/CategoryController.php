@@ -93,7 +93,9 @@ class CategoryController extends Controller
             $category->parent_id=$validated['parent_id'];
         }
         catch (\Exception $exception)
-        {}
+        {
+            abort(500, $exception->getMessage());
+        }
 
         return redirect()
             ->route('categories.index')

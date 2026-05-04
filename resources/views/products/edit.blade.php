@@ -87,7 +87,8 @@
                                 required>
                             <option value="">Выберите категорию</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                <option
+                                    value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -105,7 +106,8 @@
                                 required>
                             <option value="">Выберите бренд</option>
                             @foreach($brands as $brand)
-                                <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>
+                                <option
+                                    value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>
                                     {{ $brand->name }}
                                 </option>
                             @endforeach
@@ -123,7 +125,8 @@
                                 required>
                             <option value="">Выберите страну</option>
                             @foreach($countries as $country)
-                                <option value="{{ $country->id }}" {{ old('country_id', $product->country_id) == $country->id ? 'selected' : '' }}>
+                                <option
+                                    value="{{ $country->id }}" {{ old('country_id', $product->country_id) == $country->id ? 'selected' : '' }}>
                                     {{ $country->name }}
                                 </option>
                             @endforeach
@@ -137,7 +140,8 @@
                         <label for="img_path" class="block text-white mb-2">Изображение товара</label>
                         @if($product->img_path)
                             <div class="mb-2">
-                                <img src="{{ asset('storage/' . $product->img_path) }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded">
+                                <img src="{{ asset('storage/' . $product->img_path) }}" alt="{{ $product->name }}"
+                                     class="w-32 h-32 object-cover rounded">
                                 <p class="text-gray-400 text-sm mt-1">Текущее изображение</p>
                             </div>
                         @endif

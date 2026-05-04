@@ -74,7 +74,9 @@ class BrandController extends Controller
             $brand->active=$validated['active'];
         }
         catch (\Exception $exception)
-        {}
+        {
+            abort(500, $exception->getMessage());
+        }
 
         return redirect()
             ->route('brands.index')
