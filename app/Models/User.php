@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
+#[Fillable(['name', 'email', 'password', 'role', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -44,5 +44,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getRole(): string
     {
         return mb_ucfirst($this->attributes['role']);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
     }
 }

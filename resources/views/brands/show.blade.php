@@ -19,10 +19,12 @@
                     </p>
                 </div>
 
-                <a href="{{ route('brands.edit', $brand) }}"
-                   class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                    Редактировать
-                </a>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('brands.edit', $brand) }}"
+                       class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                        Редактировать
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -32,7 +34,8 @@
                 @foreach($brand->products as $product)
                     <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
                         @if($product->img_path)
-                            <img src="{{ $product->img_path }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+                            <img src="{{ $product->img_path }}" alt="{{ $product->name }}"
+                                 class="w-full h-48 object-cover">
                         @else
                             <div class="w-full h-48 bg-gray-800 flex items-center justify-center">
                                 <span class="text-gray-600">Нет фото</span>
@@ -42,7 +45,8 @@
                             <h3 class="text-white font-bold text-lg mb-2">{{ $product->name }}</h3>
                             <p class="text-gray-400 text-sm mb-3">{{ Str::limit($product->description, 100) }}</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-blue-400 font-bold text-xl">{{ number_format($product->price, 2) }} ₽</span>
+                                <span
+                                    class="text-blue-400 font-bold text-xl">{{ number_format($product->price, 2) }} ₽</span>
                                 @if($product->discount_price)
                                     <span class="text-gray-500 line-through text-sm">{{ number_format($product->discount_price, 2) }} ₽</span>
                                 @endif
