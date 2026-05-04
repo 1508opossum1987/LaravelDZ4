@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -36,5 +37,26 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        \Log::info('Пользователь вошел:', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'is_active' => $user->is_active
+        ]);
+
+        if (!$user->is_active) {
+            $this->guard()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Ваш аккаунт заблокирован. Обратитесь к администратору.',
+            ]);
+        }
+
+        return redirect()->intended($this->redirectTo);
     }
 }
