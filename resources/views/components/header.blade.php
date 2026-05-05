@@ -4,7 +4,12 @@
 
         <!-- Верхняя строка -->
         <div class="flex items-center justify-between h-20">
-
+            @if(auth()->user()->isAdmin())
+                <a href="{{ route('admin.users.index') }}"
+                   class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                    👥 Пользователи
+                </a>
+            @endif
             <!-- Логотип -->
             <div class="flex items-center">
                 <a href="#" class="flex items-center gap-x-3 group">

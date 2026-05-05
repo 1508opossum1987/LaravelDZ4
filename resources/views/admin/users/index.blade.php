@@ -2,13 +2,13 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
+        <!{{--<div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-white">Управление пользователями</h1>
             <a href="{{ route('admin.users.index') }}"
                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
                 🔄 Выгрузить список пользователей
             </a>
-        </div>
+        </div>--}}>
 
         @if(session('success'))
             <div class="bg-green-600 text-white p-4 rounded-lg mb-6">
@@ -125,8 +125,8 @@
             </div>
         </div>
 
-        <div class="mt-10">
+        {{-- <div class="mt-10">
             {{ $users->links() }}
-        </div>
+        </div> --}}
     </div>
 @endsection

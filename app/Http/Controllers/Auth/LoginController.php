@@ -41,11 +41,12 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        \Log::info('Пользователь вошел:', [
-            'id' => $user->id,
-            'name' => $user->name,
-            'is_active' => $user->is_active
-        ]);
+        //\Log::info('Пользователь вошел:', [
+         //   'id' => $user->id,
+         //   'name' => $user->name,
+         //   'is_active' => $user->is_active
+        //]);
+        //dd($user->is_active);
 
         if (!$user->is_active) {
             $this->guard()->logout();

@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
+
 @include('components.header')
 
 <main class="flex-grow">
@@ -15,6 +16,6 @@
 </main>
 
 @include('components.footer')
+
 </body>
 </html>
-

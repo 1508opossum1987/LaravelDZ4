@@ -15,7 +15,7 @@ class UserController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('users.index', (
+        return view('admin.users.index', (
         ['users' => $users]
         ));
     }
