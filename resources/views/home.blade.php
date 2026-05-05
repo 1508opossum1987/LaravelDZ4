@@ -43,7 +43,6 @@
                     </div>
                 @endforelse
             </div>
-
             <!-- Пагинация -->
             <div class="mt-10">
                 {{ $products->withQueryString()->links() }}
