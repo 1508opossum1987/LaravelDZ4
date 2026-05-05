@@ -2,13 +2,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <!{{--<div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-white">Управление пользователями</h1>
-            <a href="{{ route('admin.users.index') }}"
-               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                🔄 Выгрузить список пользователей
-            </a>
-        </div>--}}>
 
         @if(session('success'))
             <div class="bg-green-600 text-white p-4 rounded-lg mb-6">
@@ -44,6 +37,8 @@
                             <td class="px-6 py-4">
                                 @if($user->role === 'admin')
                                     <span class="px-2 py-1 bg-purple-900 text-purple-300 text-xs rounded-full font-medium">Admin</span>
+                                @elseif($user->role === 'manager')
+                                    <span class="px-2 py-1 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">Manager</span>
                                 @else
                                     <span class="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full font-medium">User</span>
                                 @endif
@@ -51,18 +46,18 @@
                             <td class="px-6 py-4">
                                 @if($user->is_active)
                                     <span class="flex items-center gap-1 text-green-400 text-sm">
-                                            <span>🟢</span> Активен
-                                        </span>
+                                        <span>🟢</span> Активен
+                                    </span>
                                 @else
                                     <span class="flex items-center gap-1 text-red-400 text-sm">
-                                            <span>🔴</span> Заблокирован
-                                        </span>
+                                        <span>🔴</span> Заблокирован
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex gap-2 flex-wrap">
-                                    {{-- Кнопка блокировки/разблокировки (скрыта для себя) --}}
                                     @if($user->id !== auth()->id())
+                                        {{-- Кнопка блокировки/разблокировки --}}
                                         @if($user->is_active)
                                             <form action="{{ route('admin.users.toggleActive', $user->id) }}" method="POST" class="inline">
                                                 @csrf
@@ -85,28 +80,16 @@
                                             </form>
                                         @endif
 
-                                        {{-- Кнопка смены роли (скрыта для себя) --}}
-                                        @if($user->role === 'admin')
-                                            <form action="{{ route('admin.users.changeRole', $user->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit"
-                                                        onclick="return confirm('Понизить пользователя «{{ $user->name }}» до роли User?')"
-                                                        class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded-lg transition text-sm">
-                                                    Сменить роль на User
-                                                </button>
-                                            </form>
-                                        @else
-                                            <form action="{{ route('admin.users.changeRole', $user->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit"
-                                                        onclick="return confirm('Повысить пользователя «{{ $user->name }}» до роли Admin?')"
-                                                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg transition text-sm">
-                                                    Сменить роль на Admin
-                                                </button>
-                                            </form>
-                                        @endif
+                                        {{-- Кнопка смены роли --}}
+                                        <form action="{{ route('admin.users.changeRole', $user->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                    onclick="return confirm('Сменить роль пользователя «{{ $user->name }}»? (Admin → Manager → User → Admin)')"
+                                                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded-lg transition text-sm">
+                                                Сменить роль
+                                            </button>
+                                        </form>
                                     @else
                                         <span class="text-gray-500 text-xs italic">(Это вы)</span>
                                     @endif
@@ -124,9 +107,5 @@
                 </table>
             </div>
         </div>
-
-        {{-- <div class="mt-10">
-            {{ $users->links() }}
-        </div> --}}
     </div>
 @endsection

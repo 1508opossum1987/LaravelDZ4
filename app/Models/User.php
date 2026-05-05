@@ -51,4 +51,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->is_active;
     }
+
+    public function isManager(): bool
+    {
+        return $this->role === 'manager';
+    }
+
+    public function canManageProducts(): bool
+    {
+        return $this->role === 'manager' || $this->role === 'admin';
+    }
 }

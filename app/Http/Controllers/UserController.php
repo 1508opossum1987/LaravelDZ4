@@ -51,10 +51,12 @@ class UserController extends Controller
                 ->with('error', 'Вы не можете изменить роль своего аккаунта');
         }
 
-        if ($user->role === 'admin') {
-            $user->role = 'user';
-        } else
-            $user->role = 'admin';
+        $roles = ['admin', 'manager', 'user'];
+
+        $currentIndex = array_search($user->role, $roles);
+        $nextRole = $roles[($currentIndex + 1) % count($roles)];
+
+        $user->role = $nextRole;
 
         $user->save();
 

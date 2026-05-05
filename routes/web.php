@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CheckUserActive;
+use App\Http\Middleware\ManagerMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
@@ -148,24 +149,24 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('', [ProductController::class, 'index'])->name('index');
     Route::get('create', [ProductController::class, 'create'])
         ->name('create')
-        ->middleware(AdminMiddleware::class)
+        ->middleware(ManagerMiddleware::class)
         ->middleware(CheckUserActive::class);
     Route::post('', [ProductController::class, 'store'])
         ->name('store')
-        ->middleware(AdminMiddleware::class)
+        ->middleware(ManagerMiddleware::class)
         ->middleware(CheckUserActive::class);
     Route::get('{product}', [ProductController::class, 'show'])->name('show');
     Route::get('{product}/edit', [ProductController::class, 'edit'])
         ->name('edit')
-        ->middleware(AdminMiddleware::class)
+        ->middleware(ManagerMiddleware::class)
         ->middleware(CheckUserActive::class);
     Route::put('{product}', [ProductController::class, 'update'])
         ->name('update')
-        ->middleware(AdminMiddleware::class)
+        ->middleware(ManagerMiddleware::class)
         ->middleware(CheckUserActive::class);
     Route::delete('{product}', [ProductController::class, 'destroy'])
         ->name('destroy')
-        ->middleware(AdminMiddleware::class)
+        ->middleware(ManagerMiddleware::class)
         ->middleware(CheckUserActive::class);
     Route::put('{product}/restore', [ProductController::class, 'restore'])
         ->name('restore')

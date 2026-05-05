@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Елена Новикова',
                 'email' => 'elena.novikova@example.com',
                 'password' => Hash::make('password123'),
-                'role' => 'user',
+                'role' => 'manager',
             ],
             [
                 'name' => 'Алексей Морозов',
@@ -124,7 +124,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Юлия Борисова',
                 'email' => 'yulia.borisova@example.com',
                 'password' => Hash::make('admin123'),
-                'role' => 'admin',
+                'role' => 'manager',
             ],
             [
                 'name' => 'Николай Титов',
@@ -136,7 +136,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Ирина Тарасова',
                 'email' => 'irina.tarassova@example.com',
                 'password' => Hash::make('admin123'),
-                'role' => 'admin',
+                'role' => 'manager',
             ],
         ];
 
